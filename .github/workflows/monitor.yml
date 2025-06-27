@@ -23,6 +23,7 @@ jobs:
                 --form-string "user=${{ secrets.PUSHOVER_USER }}" \
                 --form-string "title=🔴 $NAME Alert" \
                 --form-string "message=⚠️ $URL is down ($STATUS) at $TIME" \
+                --form-string "priority=2" \
                 https://api.pushover.net/1/messages.json
             else
               echo "✅ $NAME is up: $STATUS"
