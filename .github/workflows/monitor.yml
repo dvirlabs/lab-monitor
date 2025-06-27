@@ -2,7 +2,7 @@ name: Monitor Lab URLs
 
 on:
   schedule:
-    - cron: "* * * * *"
+    - cron: "*/5 * * * *"  # מריץ כל 5 דקות (שנה לפי הצורך)
   workflow_dispatch:
 
 jobs:
@@ -11,20 +11,26 @@ jobs:
     steps:
       - name: Check Woodpecker URL
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://woodpecker.dvirlabs.com)
+          URL="https://woodpecker.dvirlabs.com"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+          TIME=$(date "+%Y-%m-%d %H:%M:%S")
 
           if [[ "$STATUS" == "502" ]]; then
             curl -s \
               --form-string "token=${{ secrets.PUSHOVER_TOKEN }}" \
               --form-string "user=${{ secrets.PUSHOVER_USER }}" \
-              --form-string "message=⚠️ Woodpecker is down (502)" \
+              --form-string "title=🚨 Woodpecker Alert" \
+              --form-string "message=⚠️ $URL is down (502) at $TIME" \
               https://api.pushover.net/1/messages.json
+            exit 1
           elif [[ "$STATUS" == "404" ]]; then
             curl -s \
               --form-string "token=${{ secrets.PUSHOVER_TOKEN }}" \
               --form-string "user=${{ secrets.PUSHOVER_USER }}" \
-              --form-string "message=❌ Woodpecker not found (404)" \
+              --form-string "title=🚨 Woodpecker Alert" \
+              --form-string "message=❌ $URL returned 404 at $TIME" \
               https://api.pushover.net/1/messages.json
+            exit 1
           else
-            echo "✅ All good: $STATUS"
+            echo "✅ Woodpecker is up: $STATUS"
           fi
