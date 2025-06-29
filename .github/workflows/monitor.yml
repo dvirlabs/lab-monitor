@@ -2,28 +2,31 @@ name: Monitor Lab URLs
 
 on:
   schedule:
-    - cron: "*/5 * * * *"  # כל 5 דקות
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
   monitor:
     runs-on: ubuntu-latest
     steps:
-      - name: Check services
+      - name: Check all URLs
         run: |
           check_url() {
             URL=$1
             NAME=$2
+            CODE=$3
+            MESSAGE=$4
+            PRIORITY=$5
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
             TIME=$(date "+%Y-%m-%d %H:%M:%S")
 
-            if [[ "$STATUS" == "502" || "$STATUS" == "404" ]]; then
+            if [[ "$STATUS" != "$CODE" ]]; then
               curl -s \
                 --form-string "token=${{ secrets.PUSHOVER_TOKEN }}" \
                 --form-string "user=${{ secrets.PUSHOVER_USER }}" \
                 --form-string "title=🔴 $NAME Alert" \
-                --form-string "message=⚠️ $URL is down ($STATUS) at $TIME" \
-                --form-string "priority=2" \
+                --form-string "message=$MESSAGE at $TIME" \
+                --form-string "priority=$PRIORITY" \
                 --form-string "retry=60" \
                 --form-string "expire=600" \
                 https://api.pushover.net/1/messages.json
@@ -31,7 +34,9 @@ jobs:
               echo "✅ $NAME is up: $STATUS"
             fi
           }
-
-          check_url "https://woodpecker.dvirlabs.com" "Woodpecker"
-          check_url "https://grafana.dvirlabs.com" "Grafana"
-          check_url "https://vault.dvirlabs.com" "Vault"
+          check_url "https://woodpecker.dvirlabs.com" "harbor" "502" "⚠️ harbor down (502)" "2"
+          check_url "https://woodpecker.dvirlabs.com" "harbor" "404" "⚠️ harbor down (404)" "0"
+          check_url "https://woodpecker.dvirlabs.com" "harbor" "1033" "⚠️ harbor down (1033)" "2"
+          check_url "https://woodpecker.dvirlabs.com" "woodpecker" "502" "⚠️ woodpecker down (502)" "2"
+          check_url "https://woodpecker.dvirlabs.com" "woodpecker" "404" "⚠️ woodpecker down (404)" "0"
+          check_url "https://woodpecker.dvirlabs.com" "woodpecker" "1033" "⚠️ woodpecker down (1033)" "2"
