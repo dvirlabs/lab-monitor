@@ -20,7 +20,7 @@ jobs:
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
             TIME=$(date "+%Y-%m-%d %H:%M:%S")
 
-            if [[ "$STATUS" != "$CODE" ]]; then
+            if [[ "$STATUS" == "$CODE" ]]; then
               curl -s \
                 --form-string "token=${{ secrets.PUSHOVER_TOKEN }}" \
                 --form-string "user=${{ secrets.PUSHOVER_USER }}" \
