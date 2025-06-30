@@ -34,5 +34,6 @@ jobs:
 
           check_url "https://woodpecker.dvirlabs.com" "harbor"
           check_url "https://woodpecker.dvirlabs.com" "woodpecker"
+          check_url "https://minio.dvirlabs.com" "minio"
           check_url "https://grafana.dvirlabs.com" "grafana"
           check_url "https://prometheus.dvirlabs.com" "prometheus"
