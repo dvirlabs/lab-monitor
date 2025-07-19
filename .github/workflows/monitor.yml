@@ -32,7 +32,6 @@ jobs:
             fi
           }
 
-          check_url "https://plane.dvirlabs.com" "plane"
           check_url "https://harbor.dvirlabs.com" "harbor"
           check_url "https://woodpecker.dvirlabs.com" "woodpecker"
           check_url "https://minio.dvirlabs.com" "minio"
