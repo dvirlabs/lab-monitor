@@ -1,49 +1,49 @@
-name: Monitor Lab URLs
+# name: Monitor Lab URLs
 
-on:
-  schedule:
-    - cron: "*/5 * * * *"
-  workflow_dispatch:
+# on:
+#   schedule:
+#     - cron: "*/5 * * * *"
+#   workflow_dispatch:
 
-jobs:
-  monitor:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check services
-        run: |
-          check_url() {
-            URL=$1
-            NAME=$2
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
-            TIME=$(date "+%Y-%m-%d %H:%M:%S")
+# jobs:
+#   monitor:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check services
+#         run: |
+#           check_url() {
+#             URL=$1
+#             NAME=$2
+#             STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+#             TIME=$(date "+%Y-%m-%d %H:%M:%S")
 
-            if [[ "$STATUS" == "502" || "$STATUS" == "404" ]]; then
-              curl -s \
-                --form-string "token=${{ secrets.PUSHOVER_TOKEN }}" \
-                --form-string "user=${{ secrets.PUSHOVER_USER }}" \
-                --form-string "title=🔴 $NAME Alert" \
-                --form-string "message=⚠️ $URL is down ($STATUS) at $TIME" \
-                --form-string "priority=2" \
-                --form-string "retry=60" \
-                --form-string "expire=600" \
-                https://api.pushover.net/1/messages.json
-            else
-              echo "✅ $NAME is up: $STATUS"
-            fi
-          }
+#             if [[ "$STATUS" == "502" || "$STATUS" == "404" ]]; then
+#               curl -s \
+#                 --form-string "token=${{ secrets.PUSHOVER_TOKEN }}" \
+#                 --form-string "user=${{ secrets.PUSHOVER_USER }}" \
+#                 --form-string "title=🔴 $NAME Alert" \
+#                 --form-string "message=⚠️ $URL is down ($STATUS) at $TIME" \
+#                 --form-string "priority=2" \
+#                 --form-string "retry=60" \
+#                 --form-string "expire=600" \
+#                 https://api.pushover.net/1/messages.json
+#             else
+#               echo "✅ $NAME is up: $STATUS"
+#             fi
+#           }
 
-          check_url "https://git.dvirlabs.com" "git"
-          check_url "https://harbor.dvirlabs.com" "harbor"
-          check_url "https://wiki.dvirlabs.com" "wiki"
-          check_url "https://vault.dvirlabs.com" "vault"
-          check_url "https://woodpecker.dvirlabs.com" "woodpecker"
-          check_url "https://minio.dvirlabs.com" "minio"
-          check_url "https://grafana.dvirlabs.com" "grafana"
-          check_url "https://kibana-int.dvirlabs.com" "kibana-int"
-          check_url "https://kibana.dvirlabs.com" "kibana"
-          check_url "https://alertmanager.dvirlabs.com" "alertmanager"
-          check_url "https://grafana.dvirlabs.com" "grafana"
-          check_url "https://prometheus.dvirlabs.com" "prometheus"
-          check_url "https://prometheus.dvirlabs.com" "prometheus"
-          check_url "https://prometheus-int.dvirlabs.com" "prometheus-int"
-          check_url "https://kuma.dvirlabs.com" "kuma"
+#           check_url "https://git.dvirlabs.com" "git"
+#           check_url "https://harbor.dvirlabs.com" "harbor"
+#           check_url "https://wiki.dvirlabs.com" "wiki"
+#           check_url "https://vault.dvirlabs.com" "vault"
+#           check_url "https://woodpecker.dvirlabs.com" "woodpecker"
+#           check_url "https://minio.dvirlabs.com" "minio"
+#           check_url "https://grafana.dvirlabs.com" "grafana"
+#           check_url "https://kibana-int.dvirlabs.com" "kibana-int"
+#           check_url "https://kibana.dvirlabs.com" "kibana"
+#           check_url "https://alertmanager.dvirlabs.com" "alertmanager"
+#           check_url "https://grafana.dvirlabs.com" "grafana"
+#           check_url "https://prometheus.dvirlabs.com" "prometheus"
+#           check_url "https://prometheus.dvirlabs.com" "prometheus"
+#           check_url "https://prometheus-int.dvirlabs.com" "prometheus-int"
+#           check_url "https://kuma.dvirlabs.com" "kuma"
