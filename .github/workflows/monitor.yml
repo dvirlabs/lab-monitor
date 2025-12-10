@@ -32,6 +32,10 @@ jobs:
             fi
           }
 
+          check_url "https://harbor.dvirlabs.com" "harbor"
+          check_url "https://wiki.dvirlabs.com" "wiki"
+          check_url "https://vault.dvirlabs.com" "vault"
+          check_url "https://woodpecker.dvirlabs.com" "woodpecker"
           check_url "https://minio.dvirlabs.com" "minio"
           check_url "https://grafana.dvirlabs.com" "grafana"
           check_url "https://kibana-int.dvirlabs.com" "kibana-int"
